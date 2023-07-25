@@ -9,7 +9,7 @@ import { prisma } from '~/utils/db.server.ts'
 import { useIsSubmitting } from '~/utils/misc.ts'
 import { commitSession, getSession } from '~/utils/session.server.ts'
 import { verifyTOTP } from '~/utils/totp.server.ts'
-import { onboardingEmailSessionKey } from './onboarding.tsx'
+import { onboardingEmailSessionKey } from './onboarding/session-key.server.ts'
 import {
 	onboardingEmailQueryParam,
 	onboardingOTPQueryParam,

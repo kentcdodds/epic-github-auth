@@ -16,10 +16,12 @@ import {
 } from '@remix-run/react'
 import { safeRedirect } from 'remix-utils'
 import { z } from 'zod'
+import { CheckboxField, ErrorList, Field } from '~/components/forms.tsx'
 import { Spacer } from '~/components/spacer.tsx'
 import { StatusButton } from '~/components/ui/status-button.tsx'
 import { authenticator, requireAnonymous, signup } from '~/utils/auth.server.ts'
-import { CheckboxField, ErrorList, Field } from '~/components/forms.tsx'
+import { prisma } from '~/utils/db.server.ts'
+import { redirectWithConfetti } from '~/utils/flash-session.server.ts'
 import { commitSession, getSession } from '~/utils/session.server.ts'
 import {
 	nameSchema,
@@ -27,10 +29,7 @@ import {
 	usernameSchema,
 } from '~/utils/user-validation.ts'
 import { checkboxSchema } from '~/utils/zod-extensions.ts'
-import { redirectWithConfetti } from '~/utils/flash-session.server.ts'
-import { prisma } from '~/utils/db.server.ts'
-
-export const onboardingEmailSessionKey = 'onboardingEmail'
+import { onboardingEmailSessionKey } from './session-key.server.ts'
 
 const onboardingFormSchema = z
 	.object({
