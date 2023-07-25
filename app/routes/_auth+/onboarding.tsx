@@ -65,7 +65,10 @@ export async function loader({ request }: DataFunctionArgs) {
 	}
 	const message = error?.message ?? null
 	return json(
-		{ formError: typeof message === 'string' ? message : null },
+		{
+			formError: typeof message === 'string' ? message : null,
+			onboardingEmail,
+		},
 		{
 			headers: {
 				'Set-Cookie': await commitSession(session),
@@ -76,7 +79,7 @@ export async function loader({ request }: DataFunctionArgs) {
 
 export async function action({ request }: DataFunctionArgs) {
 	const cookieSession = await getSession(request.headers.get('cookie'))
-	const email = cookieSession.get(onboardingEmailSessionKey)
+	const email = cookieSession.get(onboardingEmailSessionKey).trim()
 	if (typeof email !== 'string' || !email) {
 		return redirect('/signup')
 	}
@@ -164,7 +167,7 @@ export default function OnboardingPage() {
 				<div className="flex flex-col gap-3 text-center">
 					<h1 className="text-h1">Welcome aboard!</h1>
 					<p className="text-body-md text-muted-foreground">
-						Please enter your details.
+						Please enter your details for {data.onboardingEmail}.
 					</p>
 				</div>
 				<Spacer size="xs" />

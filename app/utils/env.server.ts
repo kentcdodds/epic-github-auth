@@ -7,6 +7,8 @@ const requiredServerEnvs = [
 	'SESSION_SECRET',
 	'INTERNAL_COMMAND_TOKEN',
 	'CACHE_DATABASE_PATH',
+	'GITHUB_CLIENT_ID',
+	'GITHUB_CLIENT_SECRET',
 	// If you plan to use Resend, uncomment this line
 	// 'RESEND_API_KEY',
 	// If you plan on using Sentry, uncomment this line

@@ -30,6 +30,30 @@ const handlers = [
 				)
 		  })
 		: null,
+	rest.post('https://github.com/login/oauth/access_token', (req, res, ctx) => {
+		return res(
+			ctx.body(
+				new URLSearchParams({
+					access_token: '__MOCK_ACCESS_TOKEN__',
+					token_type: '__MOCK_TOKEN_TYPE__',
+				}).toString(),
+			),
+		)
+	}),
+	rest.get('https://api.github.com/user', (req, res, ctx) => {
+		return res(
+			ctx.json({
+				login: 'mocked-login',
+				id: 123456789,
+				name: 'Mocked User',
+				avatar_url: 'https://github.com/ghost.png',
+				emails: ['mock@example.com'],
+			}),
+		)
+	}),
+	rest.get('https://api.github.com/user/emails', (req, res, ctx) => {
+		return res(ctx.json([{ email: 'mock@example.com' }]))
+	}),
 ].filter(Boolean)
 
 const server = setupServer(...handlers)

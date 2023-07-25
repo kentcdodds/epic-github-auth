@@ -1,7 +1,7 @@
 import { conform, useForm } from '@conform-to/react'
 import { getFieldsetConstraint, parse } from '@conform-to/zod'
 import { json, redirect, type DataFunctionArgs } from '@remix-run/node'
-import { Link, useFetcher } from '@remix-run/react'
+import { Form, Link, useFetcher } from '@remix-run/react'
 import { AuthorizationError } from 'remix-auth'
 import { FormStrategy } from 'remix-auth-form'
 import { safeRedirect } from 'remix-utils'
@@ -16,6 +16,7 @@ import { passwordSchema, usernameSchema } from '~/utils/user-validation.ts'
 import { checkboxSchema } from '~/utils/zod-extensions.ts'
 import { twoFAVerificationType } from '../settings+/profile.two-factor.tsx'
 import { unverifiedSessionKey } from './verify.tsx'
+import { Button } from '~/components/ui/button.tsx'
 
 const ROUTE_PATH = '/resources/login'
 
@@ -183,6 +184,13 @@ export function InlineLogin({
 						</StatusButton>
 					</div>
 				</loginFetcher.Form>
+				<Form
+					className="mt-5 flex items-center justify-center gap-2 border-t-2 border-border pt-3"
+					action="/auth/github"
+					method="POST"
+				>
+					<Button type="submit">Sign up with GitHub</Button>
+				</Form>
 				<div className="flex items-center justify-center gap-2 pt-6">
 					<span className="text-muted-foreground">New here?</span>
 					<Link to="/signup">Create an account</Link>

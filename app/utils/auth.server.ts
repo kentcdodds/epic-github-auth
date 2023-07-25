@@ -3,9 +3,11 @@ import { redirect } from '@remix-run/node'
 import bcrypt from 'bcryptjs'
 import { Authenticator } from 'remix-auth'
 import { FormStrategy } from 'remix-auth-form'
+import { GitHubStrategy } from 'remix-auth-github'
+import { onboardingEmailSessionKey } from '~/routes/_auth+/onboarding.tsx'
 import { prisma } from '~/utils/db.server.ts'
 import { invariant } from './misc.ts'
-import { sessionStorage } from './session.server.ts'
+import { commitSession, getSession, sessionStorage } from './session.server.ts'
 
 export type { User }
 
@@ -30,18 +32,45 @@ authenticator.use(
 		if (!user) {
 			throw new Error('Invalid username or password')
 		}
-		const session = await prisma.session.create({
-			data: {
-				expirationDate: new Date(Date.now() + SESSION_EXPIRATION_TIME),
-				userId: user.id,
-			},
-			select: { id: true },
-		})
-
-		return session.id
+		return makeSession(user.id)
 	}),
 	FormStrategy.name,
 )
+
+authenticator.use(
+	new GitHubStrategy(
+		{
+			clientID: process.env.GITHUB_CLIENT_ID,
+			clientSecret: process.env.GITHUB_CLIENT_SECRET,
+			callbackURL: '/auth/github/callback',
+		},
+		async ({ profile, request }) => {
+			const email = profile.emails[0].value.trim().toLowerCase()
+			const user = await prisma.user.findUnique({ where: { email } })
+			if (!user) {
+				const session = await getSession(request.headers.get('Cookie'))
+				session.set(onboardingEmailSessionKey, email)
+				throw redirect('/onboarding', {
+					headers: { 'Set-Cookie': await commitSession(session) },
+				})
+			}
+			return makeSession(user.id)
+		},
+	),
+	GitHubStrategy.name,
+)
+
+async function makeSession(userId: string) {
+	const session = await prisma.session.create({
+		data: {
+			expirationDate: new Date(Date.now() + SESSION_EXPIRATION_TIME),
+			userId,
+		},
+		select: { id: true },
+	})
+
+	return session.id
+}
 
 export async function requireUserId(
 	request: Request,
