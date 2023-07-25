@@ -1,54 +1,25 @@
-<div align="center">
-  <h1 align="center"><a href="https://www.epicweb.dev/epic-stack">The Epic Stack 🚀</a></h1>
-  <strong align="center">
-    Ditch analysis paralysis and start shipping Epic Web apps.
-  </strong>
-  <p>
-    This is an opinionated project starter and reference that allows teams to
-    ship their ideas to production faster and on a more stable foundation based
-    on the experience of <a href="https://kentcdodds.com">Kent C. Dodds</a> and
-    <a href="https://github.com/epicweb-dev/epic-stack/graphs/contributors">contributors</a>.
-  </p>
-</div>
+# Epic Stack OAuth 2.0 example
 
-```sh
-npx create-remix@latest --typescript --install --template epicweb-dev/epic-stack
-```
+This demonstrates how to add an OAuth 2.0 provider to your Epic Stack
+application. It uses GitHub, but the changes would be very similar for any other
+OAuth 2.0 provider with a
+[`remix-auth` strategy](https://github.com/sergiodxa/remix-auth/discussions/111).
 
-[![The Epic Stack](https://github-production-user-asset-6210df.s3.amazonaws.com/1500684/246885449-1b00286c-aa3d-44b2-9ef2-04f694eb3592.png)](https://www.epicweb.dev/epic-stack)
+The easiest way to review the changes is to look at
+[the commits](https://github.com/kentcdodds/epic-github-auth/commits). Here are
+the highlights:
 
-[The Epic Stack](https://www.epicweb.dev/epic-stack)
-
-<hr />
-
-## Watch Kent's Introduction to The Epic Stack
-
-[![screenshot of a YouTube video](https://github-production-user-asset-6210df.s3.amazonaws.com/1500684/242088051-6beafa78-41c6-47e1-b999-08d3d3e5cb57.png)](https://www.youtube.com/watch?v=yMK5SVRASxM)
-
-["The Epic Stack" by Kent C. Dodds at #RemixConf 2023 💿](https://www.youtube.com/watch?v=yMK5SVRASxM)
-
-## Docs
-
-[Read the docs](https://github.com/epicweb-dev/epic-stack/blob/main/docs)
-(please 🙏).
-
-## Support
-
-- 🆘 Join the
-  [discussion on GitHub](https://github.com/epicweb-dev/epic-stack/discussions)
-  and the [KCD Community on Discord](https://kcd.im/discord).
-- 💡 Create an
-  [idea discussion](https://github.com/epicweb-dev/epic-stack/discussions/new?category=ideas)
-  for suggestions.
-- 🐛 Open a [GitHub issue](https://github.com/epicweb-dev/epic-stack/issues) to
-  report a bug.
-
-## Branding
-
-Want to talk about the Epic Stack in a blog post or talk? Great! Here are some
-assets you can use in your material:
-[EpicWeb.dev/brand](https://epicweb.dev/brand)
-
-## Thanks
-
-You rock 🪨
+1. Install `remix-auth-github` and setup a GitHub app as documented in
+   `remix-auth-github`
+1. Add environment variables for the GitHub app's client ID and client secret
+1. Add the `GitHubStrategy` to the available strategies for your authenticator.
+1. Add a button to login with GitHub to the login page. It should post to
+   `/auth/github`.
+1. If no user exists for the GitHub email, set the onboardingEmail and redirect
+   the user to onboarding. Otherwise, do the same thing you do when a user signs
+   in with a password.
+1. Add an action on a route to handle the `/auth/github` that calls
+   `authenticate` with the `GitHubStrategy`.
+1. Add a loader on a route for the `/auth/github/callback` GitHub callback. It
+   should call `authenticate` with the `GitHubStrategy` again. Do the same thing
+   to handle 2FA that we do for verifying password login.
